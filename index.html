@@ -62,6 +62,7 @@ a{color:inherit}
 .mt-ncue-l::after{content:'';position:absolute;left:3px;top:-6px;width:6px;height:6px;border-radius:50%;background:#D7262E;animation:mt-scue 1.5s cubic-bezier(.65,0,.35,1) infinite}
 @media (prefers-reduced-motion: reduce){.mt-ncue-l::after{animation:none;top:5px;opacity:1}}
 @media (min-width: 981px){.mt-clbtn{display:none !important}}
+.mt-cllink{transition:background-color .15s ease,border-color .15s ease}.mt-cllink .mt-cl-ar{display:inline-block;transition:transform .2s var(--out)}@media (hover:hover) and (pointer:fine){.mt-cllink:hover{background:#D7262E !important;border-color:#D7262E !important}.mt-cllink:hover .mt-cl-ar{transform:translate(2px,-2px)}}.mt-cllink:focus-visible{outline:2px solid #D7262E;outline-offset:2px}.mt-cllink:active{background:#D7262E !important;border-color:#D7262E !important}
 .mt-pol{position:relative;perspective:1600px}
 .mt-pol-in{position:relative;display:grid;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.65,0,.35,1)}
 .mt-pol-f,.mt-pol-b{grid-area:1 / 1}
@@ -466,7 +467,7 @@ img{-webkit-user-drag:none}
 <div style="display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 4px 10px; font-size: 14px"><span>German</span><span style="color: #55595C">native</span><span>French</span><span style="color: #55595C">good, written &amp; spoken</span><span>English</span><span style="color: #55595C">basics, this site is practice</span></div>
 </div>
 <div><div style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .08em; color: #D7262E; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #2B2E30">FEATURING</div>
-<div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{ clientsShown }}" as="cl" hint-placeholder-count="9"><span style="font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2B2E30">{{cl}}</span></sc-for><button type="button" class="mt-clbtn" onClick="{{ toggleClients }}" aria-expanded="{{clientsOpen}}" style="all: unset; cursor: pointer; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2B2E30; border-color: #D7262E; color: #D7262E">{{clientsBtn}}</button></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{ clientsShown }}" as="cl" hint-placeholder-count="9"><sc-if value="{{ cl.link }}" hint-placeholder-val="{{ false }}"><button type="button" class="mt-cllink" onClick="{{ cl.open }}" aria-label="{{cl.aria}}" style="all: unset; cursor: pointer; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2B2E30; background: #2B2E30; color: #F4F2EC">{{cl.name}} <span aria-hidden="true" class="mt-cl-ar">↗</span></button></sc-if><sc-if value="{{ cl.plain }}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2B2E30">{{cl.name}}</span></sc-if></sc-for><button type="button" class="mt-clbtn" onClick="{{ toggleClients }}" aria-expanded="{{clientsOpen}}" style="all: unset; cursor: pointer; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2B2E30; border-color: #D7262E; color: #D7262E">{{clientsBtn}}</button></div>
 </div>
 </div>
 <div style="margin-top: 48px"><div style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .08em; color: #D7262E; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #2B2E30">BONUS TRACKS · OFF THE CLOCK</div>
@@ -930,6 +931,8 @@ class Component extends DCLogic {
     }
     const t1b = t1 + (narrow ? 1.72 : 0.8) * f1;
     const t2t = HH - gb - 0.8 * f2;
+    const CLT = { 'Economiesuisse': 'Wir die Schweiz', 'Stadt Zürich': 'Flick-it', 'Entsorgung + Recycling Zürich': 'Flick-it', 'Grün Stadt Zürich': 'Grossstadt-Dschungel', 'AbbVie': 'Digital Eye Strain', 'Baur au Lac': 'Le Combat des Chefs', 'MuDA': 'MuDA', 'Puritics': 'Puritics', 'Hair & Skin': 'Hair & Skin', 'Technoabteil': 'Technoabteil' };
+    const CLJOB = {}; Object.keys(CLT).forEach((k) => { const j = P.findIndex((q) => q.title === CLT[k]); if (j >= 0) CLJOB[k] = j; });
     const CL = ['Economiesuisse', 'Stadt Zürich', 'Entsorgung + Recycling Zürich', 'Schutz & Rettung Zürich', 'Grün Stadt Zürich', 'Sportamt Zürich', 'AbbVie', 'Optava', 'Weleda', 'FDP', 'HC Davos', 'Zurich Insurance', 'Baur au Lac', 'MuDA', 'Puritics', 'Hair & Skin', 'TGV Lyria', 'Gauloises', 'ProCinema', 'Rive Gauche', 'Technoabteil', 'Boomer', 'CookCouture', 'CleanSwiss', 'Elpin', 'Larag', 'raedli bar', 'Walde Immobilien', 'Studio5k', 'Medbrander', 'Deutscher Süsswarenverband'];
     const INTRO = "I’m Lou, a graphic designer from Zurich.\nI make campaigns, logos, posters and animations — the kind you can play loud. Agency designer by day, open for freelance after hours.";
     const h = Object.assign(this.caseState(p, mx, my, vw, vh, (t1b + t2t) / 2 - (narrow ? 6 : 0), compact ? Math.max(0.3, (t2t - t1b - 28) / 310) : 0), {
@@ -1049,7 +1052,7 @@ class Component extends DCLogic {
       levels: [['InDesign', 9], ['Illustrator', 9], ['Photoshop', 8], ['Figma', 8], ['Capture One', 8], ['After Effects', 7], ['Runway', 9], ['ComfyUI', 6], ['HTML', 1]].map((l) => this.lvlRow(T, l[0], l[1], l[0] === 'HTML' ? '(it’s a start)' : '')),
       bonus: [['Apéro', 10, '(after 5 pm)'], ['Deadline Bangerz', 10, '']].map((l) => this.lvlRow(T, l[0], l[1], l[2])),
       lvlHint: this.coarse ? 'tap for liner notes' : 'click for liner notes',
-      clients: CL, clientsOpen: !!this.state.clients, clientsShown: (this.state.clients || vw > 980) ? CL : CL.slice(0, 9), clientsBtn: this.state.clients ? 'Show less ↑' : '+ ' + (CL.length - 9) + ' more ↓', clientsClosed: !this.state.clients,
+      clients: CL, clientsOpen: !!this.state.clients, clientsShown: ((this.state.clients || vw > 980) ? CL : CL.slice(0, 9)).map((n) => { const j = CLJOB[n]; const x = j != null ? P[j] : null; return { name: n, link: !!x, plain: !x, aria: x ? n + ' – open project ' + x.title : n, open: x ? () => { this.lastFocus = n + ' – open project ' + x.title; this.setState({ open: j }); } : null }; }), clientsBtn: this.state.clients ? 'Show less ↑' : '+ ' + (CL.length - 9) + ' more ↓', clientsClosed: !this.state.clients,
       toggleClients: () => this.setState({ clients: !this.state.clients }),
       copyHint: this.state.copied ? 'Mail opened, address also copied to clipboard.' : 'or copy the address',
       onHeroMove: (e) => { if (this.reduce) return; const w = window.innerWidth || 1, hh = window.innerHeight || 1; this.tmx = e.clientX / w - 0.5; this.tmy = e.clientY / hh - 0.5; this.kick(); },
