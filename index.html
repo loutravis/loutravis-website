@@ -253,7 +253,7 @@ img{-webkit-user-drag:none}
 <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 6; background: #ECEAE4; opacity: {{h.creamO}}; pointer-events: none"></div>
 
 
-<h1 aria-label="Design with groove" style="position: absolute; left: 0; right: 0; top: calc(60px + 2.5vh); z-index: 0; margin: 0; text-align: center; font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: {{h.f1}}; line-height: .8; letter-spacing: -0.05em; pointer-events: none; white-space: nowrap"><span aria-hidden="true"><sc-for list="{{ h.l1 }}" as="l" hint-placeholder-count="11"><span onMouseEnter="{{ l.enter }}" onMouseLeave="{{ l.leave }}" style="display: inline-block; opacity: {{l.op}}; color: {{l.c}}; margin-right: {{l.mr}}; pointer-events: auto"><span style="position: relative; display: inline-block"><span style="visibility: {{l.baseVis}}">{{l.ch}}</span><span aria-hidden="true" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%); display: {{l.ovD}}">{{l.ov}}</span></span></span></sc-for></span></h1>
+<h1 aria-label="Design with groove" style="position: absolute; left: 0; right: 0; top: {{h.t1}}; z-index: 0; margin: 0; text-align: center; font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: {{h.f1}}; line-height: .8; letter-spacing: -0.05em; pointer-events: none; white-space: nowrap"><span aria-hidden="true"><sc-for list="{{ h.l1 }}" as="l" hint-placeholder-count="11"><span onMouseEnter="{{ l.enter }}" onMouseLeave="{{ l.leave }}" style="display: {{l.disp}}; height: {{l.hgt}}; vertical-align: {{l.va}}; opacity: {{l.op}}; color: {{l.c}}; margin-right: {{l.mr}}; pointer-events: auto"><span style="position: relative; display: inline-block"><span style="visibility: {{l.baseVis}}">{{l.ch}}</span><span aria-hidden="true" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%); display: {{l.ovD}}">{{l.ov}}</span></span></span></sc-for></span></h1>
 <div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: {{h.gb}}; z-index: 0; margin: 0; text-align: center; font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: {{h.f2}}; line-height: .8; letter-spacing: -0.05em; pointer-events: none; white-space: nowrap"><sc-for list="{{ h.l2 }}" as="l" hint-placeholder-count="6"><span onMouseEnter="{{ l.enter }}" onMouseLeave="{{ l.leave }}" style="display: inline-block; opacity: {{l.op}}; color: {{l.c}}; margin-right: {{l.mr}}; vertical-align: top; pointer-events: auto"><sc-if value="{{ l.isReel }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 100 100" style="display: block; width: .78em; height: .78em; margin: 0 .02em; transform: rotate({{l.rot}})"><circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="16"></circle><circle cx="50" cy="50" r="17" fill="currentColor"></circle><g fill="#000000"><rect x="46" y="33" width="8" height="10" rx="1"></rect><rect x="46" y="57" width="8" height="10" rx="1"></rect><rect x="33" y="46" width="10" height="8" rx="1"></rect><rect x="57" y="46" width="10" height="8" rx="1"></rect></g><circle cx="50" cy="50" r="5" fill="#000000"></circle></svg></sc-if><sc-if value="{{ l.isChar }}" hint-placeholder-val="{{ true }}"><span style="position: relative; display: inline-block"><span style="visibility: {{l.baseVis}}">{{l.ch}}</span><span aria-hidden="true" style="position: absolute; left: 50%; top: 0; transform: translateX(-50%); display: {{l.ovD}}">{{l.ov}}</span></span></sc-if></span></sc-for></div>
 
 <div aria-hidden="true" style="position: absolute; left: 50%; top: {{h.shTop}}; width: 520px; height: 70px; margin: -35px 0 0 -260px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.75), rgba(0,0,0,0)); filter: blur(8px); transform: scale({{h.shS}}); opacity: {{h.shO}}"></div>
@@ -912,18 +912,29 @@ class Component extends DCLogic {
       };
     });
     const compact = vw > vh && vh < 560;
+    const narrow = !compact && vw < 640 && vh > vw;
+    if (narrow) lines[0].letters.forEach((l) => { if (l.ch === '\u00a0') { l.ch = ''; l.disp = 'block'; l.hgt = '0.12em'; } });
+    lines.forEach((ln) => ln.letters.forEach((l) => { if (!l.disp) l.disp = 'inline-block'; if (!l.hgt) l.hgt = 'auto'; l.va = narrow ? 'top' : 'baseline'; }));
     this.minH = compact ? 0 : 640;
     const HH = Math.max(vh, this.minH);
-    const f1 = Math.min(190, Math.max(34, compact ? Math.min(0.102 * vw, 0.15 * vh) : 0.102 * vw));
     const f2 = Math.min(300, Math.max(56, compact ? Math.min(0.17 * vw, 0.22 * vh) : 0.17 * vw));
-    const gb = compact ? 50 : 92;
-    const t1b = 60 + 0.025 * vh + 0.8 * f1;
+    const f1 = narrow ? f2 : Math.min(190, Math.max(34, compact ? Math.min(0.102 * vw, 0.15 * vh) : 0.102 * vw));
+    let gb = compact ? 50 : 92, t1 = 60 + 0.025 * vh;
+    if (narrow) {
+      const bs = Math.max(0.5, Math.min(1.35, (vw - 40) / 470, vh / 700)) * 1.22;
+      const caseH = 266 * bs * 1.06, m = 20;
+      const tot = 1.72 * f1 + m + caseH + m + 0.8 * f2;
+      const top0 = 72, bot0 = HH - 92;
+      t1 = top0 + Math.max(0, (bot0 - top0 - tot) / 2);
+      gb = Math.max(gb, Math.round(HH - (t1 + tot)));
+    }
+    const t1b = t1 + (narrow ? 1.72 : 0.8) * f1;
     const t2t = HH - gb - 0.8 * f2;
     const CL = ['Economiesuisse', 'Stadt Zürich', 'Entsorgung + Recycling Zürich', 'Schutz & Rettung Zürich', 'Grün Stadt Zürich', 'Sportamt Zürich', 'AbbVie', 'Optava', 'Weleda', 'FDP', 'HC Davos', 'Zurich Insurance', 'Baur au Lac', 'MuDA', 'Puritics', 'Hair & Skin', 'TGV Lyria', 'Gauloises', 'ProCinema', 'Rive Gauche', 'Technoabteil', 'Boomer', 'CookCouture', 'CleanSwiss', 'Elpin', 'Larag', 'raedli bar', 'Walde Immobilien', 'Studio5k', 'Medbrander', 'Deutscher Süsswarenverband'];
     const INTRO = "I’m Lou, a graphic designer from Zurich.\nI make campaigns, logos, posters and animations — the kind you can play loud. Agency designer by day, open for freelance after hours.";
-    const h = Object.assign(this.caseState(p, mx, my, vw, vh, (t1b + t2t) / 2, compact ? Math.max(0.3, (t2t - t1b - 28) / 310) : 0), {
+    const h = Object.assign(this.caseState(p, mx, my, vw, vh, (t1b + t2t) / 2 - (narrow ? 6 : 0), compact ? Math.max(0.3, (t2t - t1b - 28) / 310) : 0), {
       wc: this.state.mv ? 'transform' : 'auto',
-      f1: f1.toFixed(1) + 'px', f2: f2.toFixed(1) + 'px', gb: gb + 'px',
+      f1: f1.toFixed(1) + 'px', f2: f2.toFixed(1) + 'px', gb: gb + 'px', t1: t1.toFixed(1) + 'px',
       lines, l1: lines[0].letters, l2: lines[1].letters,
       hx: (mx * -46).toFixed(1) + 'px', hy: (my * -24).toFixed(1) + 'px',
       hx2: (mx * 46).toFixed(1) + 'px', hy2: (my * 24).toFixed(1) + 'px',
