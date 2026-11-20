@@ -62,7 +62,7 @@ a{color:inherit}
 .mt-ncue-l::after{content:'';position:absolute;left:3px;top:-6px;width:6px;height:6px;border-radius:50%;background:#D7262E;animation:mt-scue 1.5s cubic-bezier(.65,0,.35,1) infinite}
 @media (prefers-reduced-motion: reduce){.mt-ncue-l::after{animation:none;top:5px;opacity:1}}
 @media (min-width: 981px){.mt-clbtn{display:none !important}}
-.mt-cllink{transition:background-color .15s ease,border-color .15s ease}.mt-cllink .mt-cl-ar{display:inline-block;transition:transform .2s var(--out)}@media (hover:hover) and (pointer:fine){.mt-cllink:hover{background:#D7262E !important;border-color:#D7262E !important}.mt-cllink:hover .mt-cl-ar{transform:translate(2px,-2px)}}.mt-cllink:focus-visible{outline:2px solid #D7262E;outline-offset:2px}.mt-cllink:active{background:#D7262E !important;border-color:#D7262E !important}
+.mt-cllink{transition:background-color .15s ease,border-color .15s ease}.mt-cllink .mt-cl-ar{display:inline-block;transition:transform .2s var(--out)}@media (hover:hover) and (pointer:fine){.mt-cllink:hover{border-color:#D7262E !important}.mt-cllink:hover .mt-cl-ar{transform:translate(2px,-2px)}}.mt-cllink:focus-visible{outline:2px solid #D7262E;outline-offset:2px}.mt-cllink:active{border-color:#D7262E !important}
 .mt-pol{position:relative;perspective:1600px}
 .mt-pol-in{position:relative;display:grid;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.65,0,.35,1)}
 .mt-pol-f,.mt-pol-b{grid-area:1 / 1}
@@ -96,7 +96,7 @@ a{color:inherit}
 @media (prefers-reduced-motion: reduce){.mt-scue-l::after{animation:none;top:5px;opacity:1}.mt-reel,.mt-vu span,.mt-rec{animation:none}.mt-unfold,.mt-spinein,.mt-alert,.mt-ov{animation:none}}
 
 :root{--ink:#2B2E30;--paper:#ECEAE4;--card:#F7F4EC;--mute:#5A5E62;--red:#D7262E;--out:cubic-bezier(.23,1,.32,1);--io:cubic-bezier(.77,0,.175,1)}
-html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent;overflow-x:hidden}@supports (overflow-x:clip){html,body{overflow-x:clip}}
 a,button,[role=button]{touch-action:manipulation}
 @media (pointer:coarse){
 .mt-lvl{padding:10px 0 !important}
@@ -250,7 +250,7 @@ img{-webkit-user-drag:none}
 </header>
 
 <section id="top" onMouseMove="{{ onHeroMove }}" onMouseLeave="{{ onHeroLeave }}" style="position: relative; height: 101.2vh; background: #ECEAE4">
-<div style="position: fixed; left: 0; right: 0; top: 0; height: {{stageH}}; z-index: 30; overflow: hidden; visibility: {{h.vis}}; opacity: {{h.heroO}}; pointer-events: {{h.heroPE}}; background: radial-gradient(120% 90% at 50% 42%, #161718 0%, #050505 55%, #000000 100%)">
+<div style="position: fixed; left: 0; right: 0; top: 0; height: {{stageH}}; z-index: 30; overflow: hidden; clip-path: inset(0); contain: paint; visibility: {{h.vis}}; opacity: {{h.heroO}}; pointer-events: {{h.heroPE}}; background: radial-gradient(120% 90% at 50% 42%, #161718 0%, #050505 55%, #000000 100%)">
 <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 6; background: #ECEAE4; opacity: {{h.creamO}}; pointer-events: none"></div>
 
 
@@ -467,7 +467,7 @@ img{-webkit-user-drag:none}
 <div style="display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 4px 10px; font-size: 14px"><span>German</span><span style="color: #55595C">native</span><span>French</span><span style="color: #55595C">good, written &amp; spoken</span><span>English</span><span style="color: #55595C">basics, this site is practice</span></div>
 </div>
 <div><div style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .08em; color: #D7262E; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #2B2E30">FEATURING</div>
-<div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{ clientsShown }}" as="cl" hint-placeholder-count="9"><sc-if value="{{ cl.link }}" hint-placeholder-val="{{ false }}"><button type="button" class="mt-cllink" onClick="{{ cl.open }}" aria-label="{{cl.aria}}" style="all: unset; cursor: pointer; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2B2E30; background: #2B2E30; color: #F4F2EC">{{cl.name}} <span aria-hidden="true" class="mt-cl-ar">↗</span></button></sc-if><sc-if value="{{ cl.plain }}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2B2E30">{{cl.name}}</span></sc-if></sc-for><button type="button" class="mt-clbtn" onClick="{{ toggleClients }}" aria-expanded="{{clientsOpen}}" style="all: unset; cursor: pointer; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2B2E30; border-color: #D7262E; color: #D7262E">{{clientsBtn}}</button></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{ clientsShown }}" as="cl" hint-placeholder-count="9"><sc-if value="{{ cl.link }}" hint-placeholder-val="{{ false }}"><button type="button" class="mt-cllink" onClick="{{ cl.open }}" aria-label="{{cl.aria}}" style="all: unset; cursor: pointer; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2B2E30">{{cl.name}} <span aria-hidden="true" class="mt-cl-ar" style="color: #D7262E">↗</span></button></sc-if><sc-if value="{{ cl.plain }}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2B2E30">{{cl.name}}</span></sc-if></sc-for><button type="button" class="mt-clbtn" onClick="{{ toggleClients }}" aria-expanded="{{clientsOpen}}" style="all: unset; cursor: pointer; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2B2E30; border-color: #D7262E; color: #D7262E">{{clientsBtn}}</button></div>
 </div>
 </div>
 <div style="margin-top: 48px"><div style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .08em; color: #D7262E; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #2B2E30">BONUS TRACKS · OFF THE CLOCK</div>
@@ -482,7 +482,7 @@ img{-webkit-user-drag:none}
 <section id="contact" aria-label="Contact" onMouseMove="{{ onHeroMove }}" onMouseLeave="{{ onHeroLeave }}" style="position: relative; height: 110vh; background: #ECEAE4">
 <div id="contact-end" aria-hidden="true" style="position: absolute; left: 0; bottom: 0; width: 1px; height: 1px"></div>
 <div class="mt-sr" style="display: {{f.srDisp}}"><h2 style="margin: 0 0 6px; font-size: 16px">Contact</h2><a href="mailto:loutravis.grafik@gmail.com?subject=Job%20inquiry%20%E2%80%93%20%5Byour%20company%20/%20project%5D&amp;body=Hi%20Lou%2C%0A%0AWe%27d%20like%20to%20work%20with%20you.%0A%0AProject%3A%0AWhat%20we%20need%20%28campaign%2C%20logo%2C%20key%20visual%2C%20motion%20%E2%80%A6%29%3A%0ATimeline%3A%0ABudget%3A%0A%0ABest%20regards%2C%0A">loutravis.grafik@gmail.com</a> · <a href="https://www.instagram.com/lou.travis/" target="_blank" rel="noopener">Instagram</a> · <a href="{{soundcloud}}" target="_blank" rel="noopener">SoundCloud</a></div>
-<div style="position: fixed; left: 0; right: 0; top: 0; height: {{stageH}}; z-index: 30; overflow: hidden; visibility: {{f.vis}}; opacity: {{f.layerO}}; pointer-events: {{f.pe}}; background: radial-gradient(120% 90% at 50% 42%, #161718 0%, #050505 55%, #000000 100%); color: #F4F2EC">
+<div style="position: fixed; left: 0; right: 0; top: 0; height: {{stageH}}; z-index: 30; overflow: hidden; clip-path: inset(0); contain: paint; visibility: {{f.vis}}; opacity: {{f.layerO}}; pointer-events: {{f.pe}}; background: radial-gradient(120% 90% at 50% 42%, #161718 0%, #050505 55%, #000000 100%); color: #F4F2EC">
 <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 6; background: #ECEAE4; opacity: {{f.creamO}}; pointer-events: none"></div>
 
 <div class="mt-ohead" style="position: absolute; left: 0; right: 0; bottom: {{f.t1}}; z-index: 0; padding: 0 24px; text-align: center; visibility: {{f.infoVis}}; opacity: {{f.infoO}}; transform: translate3d(0, {{f.infoY}}, 0)">
@@ -687,6 +687,13 @@ class Component extends DCLogic {
   componentDidMount() {
     window.addEventListener('scroll', this.onScroll, { passive: true });
     window.addEventListener('resize', this.onScroll, { passive: true });
+    this.onOrient = () => {
+      const vm = document.querySelector('meta[name=viewport]');
+      if (vm) { const orig = vm.getAttribute('content'); vm.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover'); setTimeout(() => vm.setAttribute('content', orig), 400); }
+      [60, 250, 600, 1000].forEach((t) => setTimeout(() => { if (this.syncHdr) this.syncHdr(); this.onScroll(); }, t));
+    };
+    window.addEventListener('orientationchange', this.onOrient);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', this.onScroll, { passive: true });
     this.onScroll();
     this.onKey = (e) => {
       if (e.key === 'Escape') { if (this.state.menu) { this.lastFocus = 'Open menu'; this.setState({ menu: false }); return; } this.setState({ open: -1, tool: -1 }); return; }
