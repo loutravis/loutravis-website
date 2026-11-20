@@ -797,7 +797,22 @@ class Component extends DCLogic {
   stepTape(d) { const o = this.order(); const k = o.indexOf(this.state.open); this.setState({ open: o[(k + d + o.length) % o.length] }); }
   syncDlg() { try { document.querySelectorAll('.mt-case video').forEach((v) => { if (v.dataset.m) return; v.dataset.m = '1'; v.defaultMuted = true; v.muted = true; const pr = v.play && v.play(); if (pr && pr.catch) pr.catch(() => {}); }); } catch (e) {} const cs = document.querySelector('.mt-case'); if (cs && this.caseOpen !== this.state.open) { cs.scrollTop = 0; } this.caseOpen = cs ? this.state.open : -1; try { document.documentElement.style.overflow = (cs || this.state.menu) ? 'hidden' : ''; } catch (e) {} const dl = document.querySelectorAll('.mt-dlg'); const top = dl[dl.length - 1] || null; if (top !== this.dlgEl) { if (top) { if (!this.dlgEl && !this.lastFocus) { const ae = document.activeElement; this.lastFocus = ae && ae !== document.body ? (ae.getAttribute('aria-label') || '') : ''; } const f = top.querySelector('[data-autofocus]'); if (f && !top.contains(document.activeElement)) f.focus(); } else if (this.lastFocus) { const k = this.lastFocus; this.lastFocus = ''; const el = Array.from(document.querySelectorAll('[aria-label]')).find((x) => x.getAttribute('aria-label') === k); if (el) { try { el.focus({ preventScroll: true }); } catch (e) {} } } this.dlgEl = top; } }
   componentWillUnmount() { document.removeEventListener('focusin', this.onFocusIn); window.removeEventListener('keydown', this.onKey); window.removeEventListener('scroll', this.onScroll); window.removeEventListener('resize', this.onScroll); cancelAnimationFrame(this.raf); cancelAnimationFrame(this.caseAnim); cancelAnimationFrame(this.introRaf); clearTimeout(this.ct); }
-  onScroll() { this.kick(); }
+  onScroll() { this.kick(); this.autoOutro(); }
+  autoOutro() {
+    const y = window.scrollY || 0, last = this.lastY == null ? y : this.lastY; this.lastY = y;
+    const vh = window.innerHeight || 900, oTop = this.outroTop, oLen = this.outroH;
+    if (!oTop || !oLen) return;
+    if (y < oTop - vh) { this.outroDone = false; return; }
+    if (this.reduce || this.outroAnim || this.caseAnim || this.rwRaf || this.outroDone || y <= last) return;
+    const end = Math.max(0, document.documentElement.scrollHeight - vh);
+    if (y < oTop - vh + oLen * 0.06 || y >= end - 4) return;
+    this.outroDone = true;
+    const from = y, t0 = performance.now(), dur = Math.min(2200, Math.max(900, (end - from) / vh * 1300));
+    const stop = () => { cancelAnimationFrame(this.outroAnim); this.outroAnim = 0; window.removeEventListener('wheel', stop); window.removeEventListener('touchstart', stop); window.removeEventListener('keydown', stop); };
+    window.addEventListener('wheel', stop, { passive: true }); window.addEventListener('touchstart', stop, { passive: true }); window.addEventListener('keydown', stop);
+    const step = (t) => { const k = Math.min(1, (t - t0) / dur); const e = 1 - Math.pow(1 - k, 3); window.scrollTo(0, from + (end - from) * e); if (k < 1) this.outroAnim = requestAnimationFrame(step); else stop(); };
+    this.outroAnim = requestAnimationFrame(step);
+  }
   kick() {
     if (this.raf) return;
     const tick = () => {
