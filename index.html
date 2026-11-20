@@ -690,9 +690,10 @@ class Component extends DCLogic {
     this.onOrient = () => {
       const vm = document.querySelector('meta[name=viewport]');
       if (vm) { const orig = vm.getAttribute('content'); vm.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover'); setTimeout(() => vm.setAttribute('content', orig), 400); }
-      [60, 250, 600, 1000].forEach((t) => setTimeout(() => { if (this.syncHdr) this.syncHdr(); this.onScroll(); }, t));
+      [60, 250, 600, 1000].forEach((t) => setTimeout(() => { if (window.scrollX) window.scrollTo(0, window.scrollY); if (this.syncHdr) this.syncHdr(); this.onScroll(); }, t));
     };
     window.addEventListener('orientationchange', this.onOrient);
+    this.onMq = () => this.onOrient(); try { const mq = window.matchMedia('(orientation: portrait)'); if (mq.addEventListener) mq.addEventListener('change', this.onMq); } catch (e) {}
     if (window.visualViewport) window.visualViewport.addEventListener('resize', this.onScroll, { passive: true });
     this.onScroll();
     this.onKey = (e) => {
